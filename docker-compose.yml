@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  postgis:
+    image: postgres:13
+    volumes:
+      - ./data/postgis:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: template
+      POSTGRES_DB: go-template
+    ports:
+      - "5434:5432"
