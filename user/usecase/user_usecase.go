@@ -22,9 +22,10 @@ func (u *UserUseCase) SignUp(input *domain.UserSignUp) error {
 		return err
 	}
 	user := domain.User{
-		Name:     input.Name,
-		Email:    input.Email,
-		Password: string(hash),
+		Name:       input.Name,
+		Email:      input.Email,
+		Password:   string(hash),
+		Occupation: input.Occupation,
 	}
 	if err := u.UserRepository.Create(user); err != nil {
 		return err
@@ -47,7 +48,7 @@ func (u *UserUseCase) SignIn(input *domain.UserSignIn) (string, error) {
 		return "", err
 	}
 
-	token, err := middleware.GenerateToken(user.ID)
+	token, err := middleware.GenerateToken(user.ID, user.IsAdmin)
 	if err != nil {
 		return "", err
 	}
