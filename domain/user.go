@@ -4,9 +4,11 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Name     string
-	Email    string `gorm:"unique"`
-	Password string
+	Name       string
+	Email      string `gorm:"unique"`
+	Password   string
+	Occupation string
+	IsAdmin    bool
 }
 
 type UserRepository interface {
@@ -20,9 +22,10 @@ type UserUseCase interface {
 }
 
 type UserSignUp struct {
-	Name     string `binding:"required"`
-	Email    string `binding:"required"`
-	Password string `binding:"required"`
+	Name       string `binding:"required"`
+	Email      string `binding:"required"`
+	Password   string `binding:"required"`
+	Occupation string `bindin:"required"`
 }
 
 type UserSignIn struct {

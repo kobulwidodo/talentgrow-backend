@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"talentgrow-backend/domain"
 	_userHttpHandler "talentgrow-backend/user/delivery/http"
 	_userRepository "talentgrow-backend/user/repository"
 	_userUsecase "talentgrow-backend/user/usecase"
-	"log"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -52,7 +52,7 @@ func initDb() (*gorm.DB, error) {
 		return db, err
 	}
 
-	if err := db.AutoMigrate(&domain.User{}); err != nil {
+	if err := db.AutoMigrate(&domain.User{}, &domain.Event{}, &domain.Internship{}, &domain.Partnership{}, &domain.EventParticipat{}, &domain.InternshipApplicant{}); err != nil {
 		return nil, err
 	}
 
