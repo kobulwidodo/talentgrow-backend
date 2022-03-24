@@ -2,14 +2,19 @@ package middleware
 
 import (
 	"errors"
-	"talentgrow-backend/utils"
 	"net/http"
 	"os"
 	"strings"
+	"talentgrow-backend/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
+
+type CustomClaim struct {
+	Id      uint
+	IsAdmin bool
+}
 
 func NewAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -37,7 +42,11 @@ func NewAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userLoggedin", uint(claim["user_id"].(float64)))
+		auth := CustomClaim{
+			Id:      uint(claim["user_id"].(float64)),
+			IsAdmin: claim["is_admin"].(bool),
+		}
+		c.Set("auth", auth)
 	}
 }
 
@@ -56,9 +65,10 @@ func ValidateToken(encodedToken string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func GenerateToken(userId uint) (string, error) {
+func GenerateToken(userId uint, isAdmin bool) (string, error) {
 	claim := jwt.MapClaims{}
 	claim["user_id"] = userId
+	claim["is_admin"] = isAdmin
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	signedToken, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
