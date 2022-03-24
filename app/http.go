@@ -5,6 +5,10 @@ import (
 	"log"
 	"os"
 	"talentgrow-backend/domain"
+	_internshipHttpHandler "talentgrow-backend/internship/delivery/http"
+	_internshipRepository "talentgrow-backend/internship/repository"
+	_internshipUsecase "talentgrow-backend/internship/usecase"
+	"talentgrow-backend/middleware"
 	_userHttpHandler "talentgrow-backend/user/delivery/http"
 	_userRepository "talentgrow-backend/user/repository"
 	_userUsecase "talentgrow-backend/user/usecase"
@@ -20,7 +24,6 @@ func main() {
 		log.Fatal("failed to load env")
 		panic(err)
 	}
-
 	db, err := initDb()
 	if err != nil {
 		log.Fatal("failed to connect with database")
@@ -29,11 +32,17 @@ func main() {
 	r := gin.Default()
 	api := r.Group("/api")
 
+	jwtMiddleware := middleware.NewAuthMiddleware()
+	mustAdminMiddleware := middleware.MustAdmin()
+
 	userRepository := _userRepository.NewUserRepository(db)
+	internshipRepository := _internshipRepository.NewInternshipRepository(db)
 
 	userUseCase := _userUsecase.NewUserUseCase(userRepository)
+	internshipUsecase := _internshipUsecase.NewInternshipUseCase(internshipRepository)
 
 	_userHttpHandler.NewUserHandler(api, userUseCase)
+	_internshipHttpHandler.NewInternshipHandler(api, internshipUsecase, jwtMiddleware, mustAdminMiddleware)
 
 	r.Run()
 }
