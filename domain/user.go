@@ -25,7 +25,7 @@ type UserSignUp struct {
 	Name       string `binding:"required"`
 	Email      string `binding:"required"`
 	Password   string `binding:"required"`
-	Occupation string `bindin:"required"`
+	Occupation string `binding:"required"`
 }
 
 type UserSignIn struct {
