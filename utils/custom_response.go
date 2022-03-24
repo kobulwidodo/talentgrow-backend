@@ -2,8 +2,8 @@ package utils
 
 type Response struct {
 	Message   string      `json:"message"`
-	Data      interface{} `json:"data"`
 	IsSuccess bool        `json:"is_success"`
+	Data      interface{} `json:"data"`
 }
 
 func NewSuccessResponse(msg string, data interface{}) Response {
