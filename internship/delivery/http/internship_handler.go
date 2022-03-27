@@ -21,6 +21,8 @@ func NewInternshipHandler(r *gin.RouterGroup, iu domain.InternshipUseCase, jwtMi
 		api.POST("/create", jwtMiddleware, mustAdmin, handler.CreateInternship)
 		api.GET("/:id", handler.GetInternshipById)
 		api.GET("/", handler.GetInternships)
+		api.PUT("/:id", jwtMiddleware, mustAdmin, handler.UpdateInternship)
+		api.DELETE("/:id", jwtMiddleware, mustAdmin, handler.DeleteInternship)
 	}
 }
 
@@ -61,4 +63,36 @@ func (h *InternshipHandler) GetInternships(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, utils.NewSuccessResponse("successfully fetch data", internship))
+}
+
+func (h *InternshipHandler) UpdateInternship(c *gin.Context) {
+	input := new(domain.UpdateInternship)
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.NewFailResponse(err.Error()))
+		return
+	}
+	inputUri := new(domain.FindInternship)
+	if err := c.ShouldBindUri(&inputUri); err != nil {
+		c.JSON(http.StatusBadRequest, utils.NewFailResponse(err.Error()))
+		return
+	}
+	input.Id = inputUri.Id
+	if err := h.InternshipUseCase.UpdateInternship(input); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.NewFailResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, utils.NewSuccessResponse("successfully updated date", nil))
+}
+
+func (h *InternshipHandler) DeleteInternship(c *gin.Context) {
+	input := new(domain.FindInternship)
+	if err := c.ShouldBindUri(input); err != nil {
+		c.JSON(http.StatusBadRequest, utils.NewFailResponse(err.Error()))
+		return
+	}
+	if err := h.InternshipUseCase.DeleteInternship(input.Id); err != nil {
+		c.JSON(http.StatusInternalServerError, utils.NewFailResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, utils.NewSuccessResponse("successfully deleted data", nil))
 }
