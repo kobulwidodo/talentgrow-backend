@@ -6,7 +6,7 @@ import (
 	"os"
 	"talentgrow-backend/domain"
 	_internshipHttpHandler "talentgrow-backend/internship/delivery/http"
-	_internshipRepository "talentgrow-backend/internship/repository"
+	_internshipRepository "talentgrow-backend/internship/repository/postgresql"
 	_internshipUsecase "talentgrow-backend/internship/usecase"
 	"talentgrow-backend/middleware"
 	_userHttpHandler "talentgrow-backend/user/delivery/http"
