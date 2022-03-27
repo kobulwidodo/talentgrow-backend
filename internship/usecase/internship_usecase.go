@@ -42,3 +42,30 @@ func (u *InternshipUseCase) GetInternships() ([]domain.Internship, error) {
 	}
 	return internship, nil
 }
+
+func (u *InternshipUseCase) UpdateInternship(input *domain.UpdateInternship) error {
+	internship, err := u.internshipRepository.FindOne(input.Id)
+	if err != nil {
+		return err
+	}
+	internship.Position = input.Position
+	internship.Description = input.Description
+	internship.Company = input.Company
+	internship.IsPaid = *input.IsPaid
+
+	if err := u.internshipRepository.Update(internship); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *InternshipUseCase) DeleteInternship(id uint) error {
+	internship, err := u.internshipRepository.FindOne(id)
+	if err != nil {
+		return err
+	}
+	if err := u.internshipRepository.Delete(internship); err != nil {
+		return err
+	}
+	return nil
+}
