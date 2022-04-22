@@ -5,9 +5,15 @@ import (
 	"log"
 	"os"
 	"talentgrow-backend/domain"
+	_eventHttpHandler "talentgrow-backend/event/delivery/http"
+	_eventRepository "talentgrow-backend/event/repository/postgresql"
+	_eventUsecase "talentgrow-backend/event/usecase"
 	_internshipHttpHandler "talentgrow-backend/internship/delivery/http"
 	_internshipRepository "talentgrow-backend/internship/repository/postgresql"
 	_internshipUsecase "talentgrow-backend/internship/usecase"
+	_internshipApplicantHttpHandler "talentgrow-backend/internship_applicant/delivery/http"
+	_internshipApplicantRepository "talentgrow-backend/internship_applicant/repository/postgresql"
+	_internshipApplicantUsecase "talentgrow-backend/internship_applicant/usecase"
 	"talentgrow-backend/middleware"
 	_userHttpHandler "talentgrow-backend/user/delivery/http"
 	_userRepository "talentgrow-backend/user/repository"
@@ -37,12 +43,18 @@ func main() {
 
 	userRepository := _userRepository.NewUserRepository(db)
 	internshipRepository := _internshipRepository.NewInternshipRepository(db)
+	internshipApplicantRepository := _internshipApplicantRepository.NewInternshipApplicantPostgresRepository(db)
+	eventRepository := _eventRepository.NewEventRepository(db)
 
 	userUseCase := _userUsecase.NewUserUseCase(userRepository)
 	internshipUsecase := _internshipUsecase.NewInternshipUseCase(internshipRepository)
+	internshipApplicantUsecase := _internshipApplicantUsecase.NewInternshipApplicantUseCase(internshipApplicantRepository, internshipRepository)
+	eventUsecase := _eventUsecase.NewEventRepository(eventRepository)
 
 	_userHttpHandler.NewUserHandler(api, userUseCase)
 	_internshipHttpHandler.NewInternshipHandler(api, internshipUsecase, jwtMiddleware, mustAdminMiddleware)
+	_internshipApplicantHttpHandler.NewInternshipApplicantHandler(api, internshipApplicantUsecase, jwtMiddleware)
+	_eventHttpHandler.NewEventHandler(api, eventUsecase, jwtMiddleware, mustAdminMiddleware)
 
 	r.Run()
 }
