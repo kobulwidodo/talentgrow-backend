@@ -4,10 +4,10 @@ import "gorm.io/gorm"
 
 type Internship struct {
 	gorm.Model
-	Position    string
-	Description string
-	Company     string
-	IsPaid      bool
+	Position    string `json:"position"`
+	Description string `json:"description"`
+	Company     string `json:"company"`
+	IsPaid      bool `json:"is_paid"`
 	UserId      uint `json:"-"`
 }
 
@@ -37,10 +37,10 @@ type CreateInternship struct {
 
 type UpdateInternship struct {
 	Id          uint
-	Position    string
-	Description string
-	Company     string
-	IsPaid      *bool `json:"is_paid"`
+	Position    string `binding:"required"`
+	Description string `binding:"required"`
+	Company     string `binding:"required"`
+	IsPaid      *bool `json:"is_paid" binding:"required"`
 	UserId      uint
 }
 
