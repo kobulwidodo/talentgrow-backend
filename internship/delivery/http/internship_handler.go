@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 	"talentgrow-backend/domain"
 	"talentgrow-backend/middleware"
@@ -18,7 +17,7 @@ func NewInternshipHandler(r *gin.RouterGroup, iu domain.InternshipUseCase, jwtMi
 	handler := &InternshipHandler{InternshipUseCase: iu}
 	api := r.Group("/internship")
 	{
-		api.POST("/create", jwtMiddleware, mustAdmin, handler.CreateInternship)
+		api.POST("/", jwtMiddleware, mustAdmin, handler.CreateInternship)
 		api.GET("/:id", handler.GetInternshipById)
 		api.GET("/", handler.GetInternships)
 		api.PUT("/:id", jwtMiddleware, mustAdmin, handler.UpdateInternship)
@@ -32,14 +31,12 @@ func (h *InternshipHandler) CreateInternship(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.NewFailResponse(err.Error()))
 		return
 	}
-	fmt.Println("a")
 	input.UserId = c.MustGet("auth").(middleware.CustomClaim).Id
 	if err := h.InternshipUseCase.CreateInternship(input); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.NewFailResponse(err.Error()))
 		return
 	}
 	c.JSON(http.StatusCreated, utils.NewSuccessResponse("successfully created internship", nil))
-	return
 }
 
 func (h *InternshipHandler) GetInternshipById(c *gin.Context) {
