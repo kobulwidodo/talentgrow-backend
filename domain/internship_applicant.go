@@ -16,10 +16,12 @@ type InternshipApplicant struct {
 
 type InternshipApplicantPostgresRepository interface {
 	Create(internshipApplicant InternshipApplicant) error
+	FindOne(id uint) (InternshipApplicant, error)
 }
 
 type InternshipAppilcantUseCase interface {
 	Apply(input *ApplyInternship) error
+	FindOne(input *FindApplicant) (InternshipApplicant, error)
 }
 
 type ApplyInternship struct {
@@ -33,4 +35,8 @@ type ApplyInternship struct {
 
 type FindInternshipUri struct {
 	InternshipId uint `uri:"internship_id" binding:"required"`
+}
+
+type FindApplicant struct {
+	Id uint `uri:"id" binding:"required"`
 }
