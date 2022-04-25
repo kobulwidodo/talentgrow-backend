@@ -31,7 +31,7 @@ func (r *EventRepository) FindAll() ([]domain.Event, error) {
 
 func (r *EventRepository) FindOne(id uint) (domain.Event, error) {
 	var event domain.Event
-	if err := r.db.Where("id = ?", id).Find(&event).Error; err != nil {
+	if err := r.db.Where("id = ?", id).First(&event).Error; err != nil {
 		return event, err
 	}
 	return event, nil
