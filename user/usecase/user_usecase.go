@@ -40,7 +40,7 @@ func (u *UserUseCase) SignIn(input *domain.UserSignIn) (string, error) {
 	}
 
 	if user.ID == 0 {
-		return "", errors.New("kredential not found")
+		return "", errors.New("credential not found")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
@@ -48,10 +48,18 @@ func (u *UserUseCase) SignIn(input *domain.UserSignIn) (string, error) {
 		return "", err
 	}
 
-	token, err := middleware.GenerateToken(user.ID, user.IsAdmin)
+	token, err := middleware.GenerateToken(user.ID, user.IsAdmin, user.Email)
 	if err != nil {
 		return "", err
 	}
 
 	return token, nil
+}
+
+func (u *UserUseCase) GetMe(email string) (domain.User, error) {
+	user, err := u.UserRepository.GetByEmail(email)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }
