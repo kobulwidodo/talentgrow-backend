@@ -11,7 +11,7 @@ type Event struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Type        string `json:"type"`
-	Date        time.Time `json:"date"`
+	Date        *time.Time `json:"date"`
 	UserId      uint `json:"-"`
 }
 
