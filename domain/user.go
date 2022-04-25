@@ -4,11 +4,11 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Name       string
-	Email      string `gorm:"unique"`
-	Password   string
-	Occupation string
-	IsAdmin    bool
+	Name       string `json:"name"`
+	Email      string `gorm:"unique" json:"email"`
+	Password   string `json:"-"`
+	Occupation string `json:"occupation"`
+	IsAdmin    bool `json:"is_admin"`
 }
 
 type UserRepository interface {
@@ -19,6 +19,7 @@ type UserRepository interface {
 type UserUseCase interface {
 	SignUp(input *UserSignUp) error
 	SignIn(input *UserSignIn) (string, error)
+	GetMe(email string) (User, error)
 }
 
 type UserSignUp struct {
