@@ -14,13 +14,13 @@ func NewEventRepository(er domain.EventRepository) domain.EventUseCase {
 }
 
 func (u *EventUsecase) Create(input *domain.CreateEventDto) error {
-	layoutFormat := "2006-01-02 15:04:05"
-	date, _ := time.Parse(layoutFormat, input.Date)
+	layoutFormat := "2006-01-02 15:04:05 MST"
+	date, _ := time.Parse(layoutFormat, input.Date + " WIB")
 	event := domain.Event{
 		Title: input.Title,
 		Description: input.Description,
 		Type: input.Type,
-		Date: date,
+		Date: &date,
 		UserId: input.UserId,
 	}
 	if err := u.eventRepository.Create(event); err != nil {
@@ -61,7 +61,7 @@ func (u *EventUsecase) Update(input *domain.UpdateEventDto) error {
 	event.Title = input.Title
 	event.Description = input.Description
 	event.Type = input.Type
-	event.Date = input.Date
+	event.Date = &input.Date
 	if err := u.eventRepository.Update(event); err != nil {
 		return err
 	}
