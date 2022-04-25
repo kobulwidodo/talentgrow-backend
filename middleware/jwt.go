@@ -13,6 +13,7 @@ import (
 
 type CustomClaim struct {
 	Id      uint
+	Email string
 	IsAdmin bool
 }
 
@@ -45,6 +46,7 @@ func NewAuthMiddleware() gin.HandlerFunc {
 		auth := CustomClaim{
 			Id:      uint(claim["user_id"].(float64)),
 			IsAdmin: claim["is_admin"].(bool),
+			Email: claim["email"].(string),
 		}
 		c.Set("auth", auth)
 	}
@@ -65,10 +67,11 @@ func ValidateToken(encodedToken string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func GenerateToken(userId uint, isAdmin bool) (string, error) {
+func GenerateToken(userId uint, isAdmin bool, email string) (string, error) {
 	claim := jwt.MapClaims{}
 	claim["user_id"] = userId
 	claim["is_admin"] = isAdmin
+	claim["email"] = email
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	signedToken, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
