@@ -22,3 +22,6 @@ data
 go.work
 
 .env
+
+cv/*
+!cv/.gitkeep
