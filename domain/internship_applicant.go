@@ -15,22 +15,33 @@ type InternshipApplicant struct {
 }
 
 type InternshipApplicantPostgresRepository interface {
-	Create(internshipApplicant InternshipApplicant) error
+	Create(internshipApplicant InternshipApplicant) (uint, error)
 	FindOne(id uint) (InternshipApplicant, error)
+	FindByUserIdAndInternId(userId uint, internshipId uint) (InternshipApplicant, error)
+	UpdateCv(data InternshipApplicant) error
 }
 
 type InternshipAppilcantUseCase interface {
-	Apply(input *ApplyInternship) error
+	Apply(input *ApplyInternship) (uint, error)
 	FindOne(input *FindApplicant) (InternshipApplicant, error)
+	CheckIsRegistered(userId uint, internshipId uint) (CheckRegisteredResponse, error)
+	UploadCv(path string, id uint) error
 }
 
 type ApplyInternship struct {
-	Age          int    `binding:"requried"`
-	College      string `binding:"requried"`
-	Major        string `binding:"requried"`
-	CvLink       string `binding:"requried"`
+	Age          int    `binding:"required"`
+	College      string `binding:"required"`
+	Major        string `binding:"required"`
+	CvLink       string
 	UserId       uint
 	InternshipId uint
+}
+
+type CheckRegisteredResponse struct {
+	Age int `json:"age"`
+	College string `json:"college"`
+	Major string `json:"major"`
+	IsRegistered bool `json:"is_registered"`
 }
 
 type FindInternshipUri struct {
