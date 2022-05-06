@@ -31,8 +31,7 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("failed to load env")
-		panic(err)
+		log.Fatal("failed to load env from local")
 	}
 	db, err := initDb()
 	if err != nil {
@@ -42,9 +41,9 @@ func main() {
 	r := gin.Default()
 	r.Static("/cv", "./cv")
 	r.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders: []string{"Origin", "Authorization", "Content-Type"},
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
 		AllowCredentials: true,
 	}))
 	api := r.Group("/api")
