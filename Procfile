@@ -1,1 +1,1 @@
-web: bin/talentgrow-backend
+web: bin/app
