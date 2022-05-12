@@ -55,9 +55,9 @@ func (u *InternshipAppilcantUseCase) CheckIsRegistered(userId uint, internshipId
 		return domain.CheckRegisteredResponse{}, err
 	}
 	res := domain.CheckRegisteredResponse{
-		Age: data.Age,
-		College: data.College,
-		Major: data.Major,
+		Age:          data.Age,
+		College:      data.College,
+		Major:        data.Major,
 		IsRegistered: false,
 	}
 	if data.ID != 0 {
