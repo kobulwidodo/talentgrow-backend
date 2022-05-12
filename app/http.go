@@ -11,6 +11,7 @@ import (
 	_eventParticipantHttpHandler "talentgrow-backend/event_participant/delivery/http"
 	_eventParticipantRepository "talentgrow-backend/event_participant/repository/postgresql"
 	_eventParticipantUsecase "talentgrow-backend/event_participant/usecase"
+	"talentgrow-backend/infrastructure"
 	_internshipHttpHandler "talentgrow-backend/internship/delivery/http"
 	_internshipRepository "talentgrow-backend/internship/repository/postgresql"
 	_internshipUsecase "talentgrow-backend/internship/usecase"
@@ -50,6 +51,7 @@ func main() {
 
 	jwtMiddleware := middleware.NewAuthMiddleware()
 	mustAdminMiddleware := middleware.MustAdmin()
+	s3Driver := infrastructure.NewS3Driver()
 
 	userRepository := _userRepository.NewUserRepository(db)
 	internshipRepository := _internshipRepository.NewInternshipRepository(db)
@@ -65,7 +67,7 @@ func main() {
 
 	_userHttpHandler.NewUserHandler(api, userUseCase, jwtMiddleware)
 	_internshipHttpHandler.NewInternshipHandler(api, internshipUsecase, jwtMiddleware, mustAdminMiddleware)
-	_internshipApplicantHttpHandler.NewInternshipApplicantHandler(api, internshipApplicantUsecase, jwtMiddleware)
+	_internshipApplicantHttpHandler.NewInternshipApplicantHandler(api, internshipApplicantUsecase, jwtMiddleware, &s3Driver)
 	_eventHttpHandler.NewEventHandler(api, eventUsecase, jwtMiddleware, mustAdminMiddleware)
 	_eventParticipantHttpHandler.NewEventParticipantHandler(api, eventParticipantUsecase, jwtMiddleware)
 
