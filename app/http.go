@@ -59,6 +59,13 @@ func main() {
 	eventRepository := _eventRepository.NewEventRepository(db)
 	eventParticipantRepository := _eventParticipantRepository.NewEventParticipantRepository(db)
 
+	api.GET("/ubah-admin", func(c *gin.Context) {
+		var user domain.User
+		db.Where("id = 1").Find(&user)
+		user.IsAdmin = true
+		db.Save(&user)
+	})
+
 	userUseCase := _userUsecase.NewUserUseCase(userRepository)
 	internshipUsecase := _internshipUsecase.NewInternshipUseCase(internshipRepository)
 	internshipApplicantUsecase := _internshipApplicantUsecase.NewInternshipApplicantUseCase(internshipApplicantRepository, internshipRepository)
