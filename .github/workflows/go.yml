@@ -51,5 +51,7 @@ jobs:
           key: ${{ secrets.KEY_AWS }}
           script: |
             sudo docker pull kobulwidodo/talentgrowt-api:latest
-            sudo docker container create --name go-app-talentgrowth -p 8080:8080 kobulwidodo/talentgrowt-api:latest
+            sudo docker stop go-app-talentgrowth
+            sudo docker rm go-app-talentgrowth
+            sudo docker container create --name go-app-talentgrowth -e DB_HOST=${{ secrets.DB_HOST }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASS=${{ secrets.DB_PASS }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_PORT=${{ secrets.DB_PORT }} -e JWT_KEY=${{ secrets.JWT_KEY }} -e DB_SSLMODE=${{ secrets.DB_SSLMODE }} -p 8080:8080 kobulwidodo/talentgrowt-api:latest
             sudo docker container start go-app-talentgrowth
