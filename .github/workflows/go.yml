@@ -1,0 +1,55 @@
+name: Go
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASS: ${{ secrets.DB_PASS }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  JWT_KEY: ${{ secrets.JWT_KEY }}
+  DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: kobulwidodo/talentgrowt-api:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_AWS }}
+          username: ${{ secrets.USERNAME_AWS }}
+          key: ${{ secrets.KEY_AWS }}
+          script: |
+            sudo docker pull kobulwidodo/talentgrowt-api:latest
+            sudo docker container create --name go-app-talentgrowth -p 8080:8080 kobulwidodo/talentgrowt-api:latest
+            sudo docker container start go-app-talentgrowth
